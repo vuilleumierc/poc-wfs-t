@@ -1,0 +1,12 @@
+SET standard_conforming_strings = OFF;
+DROP TABLE IF EXISTS "public"."location" CASCADE;
+DELETE FROM geometry_columns WHERE f_table_name = 'location' AND f_table_schema = 'public';
+BEGIN;
+CREATE TABLE "public"."location" ( "iri_id" BIGINT, CONSTRAINT "location_pk" PRIMARY KEY ("iri_id") );
+SELECT AddGeometryColumn('public','location','wkb_geometry',3857,'POINT',2);
+CREATE INDEX "location_wkb_geometry_geom_idx" ON "public"."location" USING GIST ("wkb_geometry");
+ALTER TABLE "public"."location" ADD COLUMN "product_id" BIGINT;
+ALTER TABLE "public"."location" ADD COLUMN "cell_id" VARCHAR;
+ALTER TABLE "public"."location" ADD COLUMN "iritimestamp" timestamp with time zone;
+ALTER TABLE "public"."location" ADD COLUMN "azimuth" FLOAT4;
+COMMIT;

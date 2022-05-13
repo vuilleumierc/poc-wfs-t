@@ -1,0 +1,29 @@
+---
+version: "3.8"
+
+services:
+
+  #############
+  # GeoServer #
+  #############
+  geoserver:
+    image: camptocamp/geoserver:jetty-openshift-2.20.1
+    user: $UID:$GID
+    ports:
+      - 61590:8080
+    volumes:
+      - ./config/web-inf/web.xml:/var/lib/jetty/webapps/geoserver/WEB-INF/web.xml
+
+  ########################
+  # Database for geodata #
+  ########################
+
+  postgres:
+    image: postgis/postgis:12-3.2-alpine
+    user: postgres
+    ports:
+      - 61543:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d

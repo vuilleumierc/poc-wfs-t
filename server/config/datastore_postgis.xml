@@ -1,0 +1,12 @@
+<dataStore>
+  <name>postgis</name>
+  <type>PostGIS</type>
+  <connectionParameters>
+    <host>postgres</host>
+    <port>5432</port>
+    <database>postgres</database>
+    <user>postgres</user>
+    <passwd>postgres</passwd>
+    <dbtype>postgis</dbtype>
+  </connectionParameters>
+</dataStore>

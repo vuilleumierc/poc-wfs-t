@@ -11,6 +11,7 @@ make serve
 To start the client application, go in the directory `client` and run:
 
 ```
+npm install
 npm start
 ```
 

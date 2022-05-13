@@ -1,11 +1,13 @@
 import "ol/ol.css";
-import { Map, View } from "ol";
+import { Map, View, Feature } from "ol";
+import Point from 'ol/geom/Point';
 import GeoJSON from 'ol/format/GeoJSON';
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import VectorSource from 'ol/source/Vector'
 import {Vector as VectorLayer} from 'ol/layer';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
+import {WFS as WFSFormat, GML as GMLFormat} from 'ol/format';
 
 const vectorSource = new VectorSource({
   format: new GeoJSON(),
@@ -40,3 +42,42 @@ const map = new Map({
     zoom: 12,
   }),
 });
+
+///
+
+const formatWFS = new WFSFormat();
+
+const formatGML = new GMLFormat({
+    featureNS: 'geo',
+    featureType: 'location',
+    srsName: 'EPSG:3857'
+});
+
+const xs = new XMLSerializer();
+const request = new XMLHttpRequest();
+
+const transactWFS = function (mode, feature) {
+    let node;
+    switch (mode) {
+        case 'insert':
+            node = formatWFS.writeTransaction([feature], null, null, formatGML);
+            break;
+        case 'update':
+            node = formatWFS.writeTransaction(null, [feature], null, formatGML);
+            break;
+        case 'delete':
+            node = formatWFS.writeTransaction(null, null, [feature], formatGML);
+            break;
+    }
+    const body = xs.serializeToString(node);
+    request.open('POST', 'http://localhost:61590/geoserver/geo/wfs');
+    request.setRequestHeader('dataType', 'xml')
+    request.setRequestHeader('contentType', 'application/xml')
+    request.send(body);
+};
+
+const feature = new Feature({
+  geometry: new Point([828064.77, 5934093.19]),
+  name: 'new point'
+});
+transactWFS('insert', feature);

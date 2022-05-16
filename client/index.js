@@ -44,8 +44,6 @@ const map = new Map({
   }),
 });
 
-///
-
 const formatWFS = new WFSFormat();
 
 const formatGML = new GMLFormat({
@@ -58,30 +56,24 @@ const xs = new XMLSerializer();
 const request = new XMLHttpRequest();
 
 const transactWFS = function (mode, feature) {
-    let node;
-    switch (mode) {
-        case 'insert':
-            node = formatWFS.writeTransaction([feature], null, null, formatGML);
-            break;
-        case 'update':
-            node = formatWFS.writeTransaction(null, [feature], null, formatGML);
-            break;
-        case 'delete':
-            node = formatWFS.writeTransaction(null, null, [feature], formatGML);
-            break;
-    }
-    const body = xs.serializeToString(node);
-    request.open('POST', 'http://localhost:61590/geoserver/geo/wfs');
-    request.setRequestHeader('dataType', 'xml')
-    request.setRequestHeader('contentType', 'application/xml')
-    request.send(body);
+  let node;
+  switch (mode) {
+      case 'insert':
+          node = formatWFS.writeTransaction([feature], null, null, formatGML);
+          break;
+      case 'update':
+          node = formatWFS.writeTransaction(null, [feature], null, formatGML);
+          break;
+      case 'delete':
+          node = formatWFS.writeTransaction(null, null, [feature], formatGML);
+          break;
+  }
+  const body = xs.serializeToString(node);
+  request.open('POST', 'http://localhost:61590/geoserver/geo/wfs');
+  request.setRequestHeader('dataType', 'xml')
+  request.setRequestHeader('contentType', 'application/xml')
+  request.send(body);
 };
-
-const feature = new Feature({
-  geometry: new Point([828064.77, 5934093.19]),
-  name: 'new point'
-});
-transactWFS('insert', feature);
 
 const modify = new Modify({source: vectorSource});
 map.addInteraction(modify);
@@ -97,6 +89,11 @@ function addInteractions() {
   map.addInteraction(draw);
   snap = new Snap({source: vectorSource});
   map.addInteraction(snap);
+
+  draw.on('drawend', function(evt) {
+    var feature = evt.feature;
+    transactWFS('insert', feature)
+  });
 }
 
 /**

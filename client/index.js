@@ -8,6 +8,7 @@ import VectorSource from 'ol/source/Vector'
 import {Vector as VectorLayer} from 'ol/layer';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import {WFS as WFSFormat, GML as GMLFormat} from 'ol/format';
+import {Draw, Modify, Snap} from 'ol/interaction';
 
 const vectorSource = new VectorSource({
   format: new GeoJSON(),
@@ -81,3 +82,30 @@ const feature = new Feature({
   name: 'new point'
 });
 transactWFS('insert', feature);
+
+const modify = new Modify({source: vectorSource});
+map.addInteraction(modify);
+
+let draw, snap; // global so we can remove them later
+const typeSelect = document.getElementById('type');
+
+function addInteractions() {
+  draw = new Draw({
+    source: vectorSource,
+    type: typeSelect.value,
+  });
+  map.addInteraction(draw);
+  snap = new Snap({source: vectorSource});
+  map.addInteraction(snap);
+}
+
+/**
+ * Handle change event.
+ */
+typeSelect.onchange = function () {
+  map.removeInteraction(draw);
+  map.removeInteraction(snap);
+  addInteractions();
+};
+
+addInteractions();

@@ -59,6 +59,13 @@ const transactWFS = function (mode, feature) {
   let node;
   switch (mode) {
       case 'insert':
+          feature.setProperties({
+            'product_id': 101,
+            'cell_id': '228-03-17293-2',
+            'iritimestamp': new Date().toISOString(),
+            'azimuth': Math.random() * 360,
+          })
+          console.log(feature.getProperties())
           node = formatWFS.writeTransaction([feature], null, null, formatGML);
           break;
       case 'update':

@@ -9,11 +9,19 @@ do
 done
 
 # Add postgis datastore
-
 until curl -u admin:geoserver -XPOST -T "config/datastore_postgis.xml" -H "Content-type: text/xml" $GEOSERVER_URL"rest/workspaces/geo/datastores" 2> /dev/null
 do
     sleep 2
 done
 
-# Add postgis layers
-curl -u admin:geoserver -XPOST -T "config/layer_location.xml" -H "Content-type: text/xml" $GEOSERVER_URL"rest/workspaces/geo/featuretypes"
+# Add postgis layer
+until curl -u admin:geoserver -XPOST -T "config/layer_location.xml" -H "Content-type: text/xml" $GEOSERVER_URL"rest/workspaces/geo/featuretypes"
+do
+    sleep 2
+done
+
+# Add write permission to layer
+until curl -u admin:geoserver -XPOST -T "config/security/rules.xml" -H "Content-type: text/xml" $GEOSERVER_URL"rest/security/acl/layers"
+do
+    sleep 2
+done

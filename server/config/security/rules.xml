@@ -1,0 +1,15 @@
+<xml version="1.0" encoding="UTF-8"?>
+<rules>
+    <rule>
+        <@resource>geo.location.r</@resource>
+        <text>ROLE_AUTHENTICATED,GROUP_ADMIN,ADMIN,ROLE_ANONYMOUS</text>
+    </rule>
+    <rule>
+        <@resource>geo.location.a</@resource>
+        <text>ROLE_AUTHENTICATED,GROUP_ADMIN,ADMIN,ROLE_ANONYMOUS</text>
+    </rule>
+    <rule>
+        <@resource>geo.location.w</@resource>
+        <text>ROLE_AUTHENTICATED,GROUP_ADMIN,ADMIN,ROLE_ANONYMOUS</text>
+    </rule>
+</rules>

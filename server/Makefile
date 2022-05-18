@@ -7,3 +7,8 @@ serve: export GEOSERVER_URL = http://localhost:61590/geoserver/
 serve:
 	UID=$(UID) GID=$(GID) docker-compose up -d
 	bash config/config_geoserver.sh
+
+.PHONY: data-dump
+
+data-dump:
+	PGPASSWORD=postgres pg_dump --data-only --file=updated_sample_data.sql --table=location --host=localhost --port=61543 --username=postgres --verbose postgres 

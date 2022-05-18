@@ -2,4 +2,4 @@
 /client/.cache
 /client/dist
 /client/package-lock.json
-
+/server/updated_sample_data.sql

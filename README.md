@@ -8,6 +8,8 @@ To start the server, go in the directory `server` and run:
 make serve
 ```
 
+To export the data that has been added through the client you can use the target `make data-dump`
+
 To start the client application, go in the directory `client` and run:
 
 ```

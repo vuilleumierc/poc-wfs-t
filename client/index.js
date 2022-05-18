@@ -1,6 +1,5 @@
 import "ol/ol.css";
 import { Map, View, Feature } from "ol";
-import Point from 'ol/geom/Point';
 import GeoJSON from 'ol/format/GeoJSON';
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
@@ -44,35 +43,34 @@ const map = new Map({
   }),
 });
 
-const formatWFS = new WFSFormat();
+/**
+ * Initializations for WFS-T request
+ */
 
+const formatWFS = new WFSFormat();
 const formatGML = new GMLFormat({
     featureNS: 'geo',
     featureType: 'location',
     srsName: 'EPSG:3857'
 });
-
 const xs = new XMLSerializer();
 const request = new XMLHttpRequest();
 
-const transactWFS = function (mode, feature) {
+/**
+ * Prepare and send WFS-T request
+ */
+
+const transactWFS = function (mode, features) {
   let node;
   switch (mode) {
       case 'insert':
-          feature.setProperties({
-            'product_id': 101,
-            'cell_id': '228-03-17293-2',
-            'iritimestamp': new Date().toISOString(),
-            'azimuth': Math.random() * 360,
-          })
-          console.log(feature.getProperties())
-          node = formatWFS.writeTransaction([feature], null, null, formatGML);
+          node = formatWFS.writeTransaction(features, null, null, formatGML);
           break;
       case 'update':
-          node = formatWFS.writeTransaction(null, [feature], null, formatGML);
+          node = formatWFS.writeTransaction(null, features, null, formatGML);
           break;
       case 'delete':
-          node = formatWFS.writeTransaction(null, null, [feature], formatGML);
+          node = formatWFS.writeTransaction(null, null, features, formatGML);
           break;
   }
   const body = xs.serializeToString(node);
@@ -82,6 +80,11 @@ const transactWFS = function (mode, feature) {
   request.send(body);
 };
 
+/**
+ * Add interactions with the map
+ */
+
+let features = new Array();
 const modify = new Modify({source: vectorSource});
 map.addInteraction(modify);
 
@@ -98,14 +101,12 @@ function addInteractions() {
   map.addInteraction(snap);
 
   draw.on('drawend', function(evt) {
-    var feature = evt.feature;
-    transactWFS('insert', feature)
+    let feature = evt.feature;
+    feature.setProperties({'iritimestamp': new Date().toISOString()});
+    features.push(feature);
   });
 }
 
-/**
- * Handle change event.
- */
 typeSelect.onchange = function () {
   map.removeInteraction(draw);
   map.removeInteraction(snap);
@@ -113,3 +114,18 @@ typeSelect.onchange = function () {
 };
 
 addInteractions();
+
+/**
+ * Read data from form and trigger WFS-T request
+ */
+
+function sendData() {
+  const elem = document.getElementById("attrs")
+  let properties = {};
+  for (let i = 0; i < elem.length; i++) {
+    properties[elem[i].name] = elem[i].value;
+  }
+  features.forEach(feature => { feature.setProperties(properties) });
+  transactWFS('insert', features)
+}
+window.sendData = sendData;

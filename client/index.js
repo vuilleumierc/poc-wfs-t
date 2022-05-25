@@ -43,10 +43,7 @@ const map = new Map({
   }),
 });
 
-/**
- * Initializations for WFS-T request
- */
-
+// Initializations for WFS-T request
 const formatWFS = new WFSFormat();
 const formatGML = new GMLFormat({
     featureNS: 'geo',
@@ -56,10 +53,7 @@ const formatGML = new GMLFormat({
 const xs = new XMLSerializer();
 const request = new XMLHttpRequest();
 
-/**
- * Prepare and send WFS-T request
- */
-
+// Prepare and send WFS-T request
 const transactWFS = function (mode, features) {
   let node;
   switch (mode) {
@@ -72,6 +66,8 @@ const transactWFS = function (mode, features) {
       case 'delete':
           node = formatWFS.writeTransaction(null, null, features, formatGML);
           break;
+      default:
+        throw 'WFS-T mode ' + mode + ' is not supported'
   }
   const body = xs.serializeToString(node);
   request.open('POST', 'http://localhost:61590/geoserver/geo/wfs');
@@ -80,15 +76,14 @@ const transactWFS = function (mode, features) {
   request.send(body);
 };
 
-/**
- * Add interactions with the map
- */
-
-let features = new Array();
+// Add interactions with the map
+const features = [];
 const modify = new Modify({source: vectorSource});
 map.addInteraction(modify);
 
-let draw, snap; // global so we can remove them later
+// Global variables so we can remove them later
+let draw;
+const snap = new Snap({source: vectorSource});
 const typeSelect = document.getElementById('type');
 
 function addInteractions() {
@@ -97,7 +92,6 @@ function addInteractions() {
     type: typeSelect.value,
   });
   map.addInteraction(draw);
-  snap = new Snap({source: vectorSource});
   map.addInteraction(snap);
 
   draw.on('drawend', function(evt) {
@@ -115,17 +109,18 @@ typeSelect.onchange = function () {
 
 addInteractions();
 
-/**
- * Read data from form and trigger WFS-T request
- */
-
+// Read data from form and trigger WFS-T request
 function sendData() {
   const elem = document.getElementById("attrs")
-  let properties = {};
+  var properties = {};
   for (let i = 0; i < elem.length; i++) {
     properties[elem[i].name] = elem[i].value;
   }
-  features.forEach(feature => { feature.setProperties(properties) });
-  transactWFS('insert', features)
+  features.forEach(feature => feature.setProperties(properties));
+  try {
+    transactWFS('insert', features)
+  } catch (e) {
+    console.error(e);
+  }
 }
 window.sendData = sendData;

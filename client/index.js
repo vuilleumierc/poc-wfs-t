@@ -112,7 +112,7 @@ addInteractions();
 // Read data from form and trigger WFS-T request
 function sendData() {
   const elem = document.getElementById("attrs")
-  var properties = {};
+  let properties = {};
   for (let i = 0; i < elem.length; i++) {
     properties[elem[i].name] = elem[i].value;
   }

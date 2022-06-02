@@ -14,11 +14,15 @@
         filter: grayscale(100%);
         opacity: .7;
       }
+      .popup {
+        background-color: white;
+      }
     </style>
   </head>
 
   <body>
     <div id="map"></div>
+    <button type="button" onclick="showLabels()">Show labels</button>
     <button type="button" onclick="toggleEditing()">Toggle editing</button>
     <form id="feature" class="form-inline">
       <label for="type">Geometry type &nbsp;</label>

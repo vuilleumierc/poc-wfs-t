@@ -1,5 +1,5 @@
 import "ol/ol.css";
-import { Map, View, Feature } from "ol";
+import { Map, View } from "ol";
 import GeoJSON from 'ol/format/GeoJSON';
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
@@ -8,6 +8,7 @@ import {Vector as VectorLayer} from 'ol/layer';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import {WFS as WFSFormat, GML as GMLFormat} from 'ol/format';
 import {Draw, Modify, Snap} from 'ol/interaction';
+import Popup from 'ol-popup';
 
 const vectorSource = new VectorSource({
   format: new GeoJSON(),
@@ -142,3 +143,14 @@ function sendData() {
   }
 }
 window.sendData = sendData;
+
+// Add attribute popup
+function showLabels() {
+  vectorSource.getFeatures().forEach(function(feature) {
+    const popup = new Popup({offset: [0, -32]});
+    map.addOverlay(popup);
+    const cell_id = feature.values_.cell_id;
+    popup.show(feature.getGeometry().flatCoordinates, '<div class="popup">Cell ID: ' + cell_id + '</div>');
+  })
+};
+window.showLabels = showLabels;

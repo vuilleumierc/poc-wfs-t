@@ -85,8 +85,10 @@ map.addInteraction(modify);
 let draw;
 const snap = new Snap({source: vectorSource});
 const typeSelect = document.getElementById('type');
+let interactionIsActive = false;
 
 function addInteractions() {
+  interactionIsActive = true;
   draw = new Draw({
     source: vectorSource,
     type: typeSelect.value,
@@ -101,13 +103,29 @@ function addInteractions() {
   });
 }
 
+
+function removeInteractions() {
+  if (interactionIsActive) {
+    map.removeInteraction(draw);
+    map.removeInteraction(snap);
+    interactionIsActive = false;
+  }
+}
+
+function toggleEditing() {
+  if (!interactionIsActive) {
+    addInteractions();
+  } else {
+    removeInteractions();
+  }
+}
+window.toggleEditing = toggleEditing;
+
 typeSelect.onchange = function () {
   map.removeInteraction(draw);
   map.removeInteraction(snap);
   addInteractions();
 };
-
-addInteractions();
 
 // Read data from form and trigger WFS-T request
 function sendData() {

@@ -8,5 +8,6 @@
     <user>postgres</user>
     <passwd>postgres</passwd>
     <dbtype>postgis</dbtype>
+    <exposePrimaryKeys>true</exposePrimaryKeys>
   </connectionParameters>
 </dataStore>

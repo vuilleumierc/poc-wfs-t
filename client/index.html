@@ -32,12 +32,15 @@
         <option value="Polygon">Polygon</option>
         <option value="Circle">Circle</option>
       </select>
+      <label for="mode">Edition mode &nbsp;</label>
+      <select id="mode">
+        <option value="insert">insert</option>
+        <option value="update">update</option>
+      </select>
     </form>
-    <p>Draw one or several points on the map, then fill attribute values in the form below and finally submit the query.<br>
-    The iritimestamp attribute is automatically set at the time of the drawing</p>
+    <p>Draw or select one or several points on the map, then fill attribute values in the form below and finally submit the query.<br>
+    The timestamp attribute is automatically set at the time of the drawing or selection</p>
     <form id="attrs" name=feature class="form-inline">
-      <label for="type">iri_id &nbsp;</label>
-      <input type="number" id="iri_id" name="iri_id" min="1" max="100000" value="1234">
       <label for="type">product_id &nbsp;</label>
       <input type="number" id="product_id" name="product_id" min="1" max="100000" value="61">
       <label for="type">cell_id &nbsp;</label>

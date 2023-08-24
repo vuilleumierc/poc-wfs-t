@@ -7,7 +7,7 @@ import VectorSource from 'ol/source/Vector'
 import {Vector as VectorLayer} from 'ol/layer';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import {WFS as WFSFormat, GML as GMLFormat} from 'ol/format';
-import {Draw, Modify, Snap} from 'ol/interaction';
+import {Draw, Modify, Select, Snap} from 'ol/interaction';
 import Popup from 'ol-popup';
 
 const vectorSource = new VectorSource({
@@ -84,12 +84,32 @@ map.addInteraction(modify);
 
 // Global variables so we can remove them later
 let draw;
+let select;
 const snap = new Snap({source: vectorSource});
 const typeSelect = document.getElementById('type');
+const editMode = document.getElementById('mode');
 let interactionIsActive = false;
 
 function addInteractions() {
   interactionIsActive = true;
+  if (editMode.value === "insert") {
+    addDrawInteraction();
+  }
+  else if (editMode.value === "update") {
+    addSelectInteraction();
+  }
+}
+
+function removeInteractions() {
+  if (interactionIsActive) {
+    map.removeInteraction(draw);
+    map.removeInteraction(snap);
+    map.removeInteraction(select);
+    interactionIsActive = false;
+  }
+}
+
+function addDrawInteraction() {
   draw = new Draw({
     source: vectorSource,
     type: typeSelect.value,
@@ -99,18 +119,22 @@ function addInteractions() {
 
   draw.on('drawend', function(evt) {
     let feature = evt.feature;
-    feature.setProperties({'iritimestamp': new Date().toISOString()});
+    feature.setProperties({'timestamp': new Date().toISOString()});
     features.push(feature);
   });
 }
 
-
-function removeInteractions() {
-  if (interactionIsActive) {
-    map.removeInteraction(draw);
-    map.removeInteraction(snap);
-    interactionIsActive = false;
-  }
+function addSelectInteraction() {
+  select = new Select({
+    hitTolerance: 10
+  });
+  map.addInteraction(select);
+  select.on('select', function({selected, deselected, mapBrowserEvent}) {
+    let feature = selected[0].values_.features[0];
+    console.log("selected feature id: " + feature.getId())
+    feature.setProperties({'timestamp': new Date().toISOString()});
+    features.push(feature);
+  });
 }
 
 function toggleEditing() {
@@ -122,14 +146,18 @@ function toggleEditing() {
 }
 window.toggleEditing = toggleEditing;
 
-typeSelect.onchange = function () {
+editMode.onchange = function () {
   map.removeInteraction(draw);
   map.removeInteraction(snap);
+  map.removeInteraction(select);
   addInteractions();
 };
 
 // Read data from form and trigger WFS-T request
 function sendData() {
+  if (features.length == 0) {
+    return;
+  }
   const elem = document.getElementById("attrs")
   let properties = {};
   for (let i = 0; i < elem.length; i++) {
@@ -137,7 +165,12 @@ function sendData() {
   }
   features.forEach(feature => feature.setProperties(properties));
   try {
-    transactWFS('insert', features)
+    if (features[0].getId() == null) {
+      transactWFS('insert', features)
+    }
+    else {
+      transactWFS('update', features)
+    }
   } catch (e) {
     console.error(e);
   }

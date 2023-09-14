@@ -14,8 +14,12 @@ do
     sleep 2
 done
 
-# Add postgis point layer
+# Add postgis layers
 until curl -u admin:geoserver -XPOST -T "config/layers/layer_location.xml" -H "Content-type: text/xml" $GEOSERVER_URL"rest/workspaces/geo/featuretypes"
+do
+    sleep 2
+done
+until curl -u admin:geoserver -XPOST -T "config/layers/layer_line.xml" -H "Content-type: text/xml" $GEOSERVER_URL"rest/workspaces/geo/featuretypes"
 do
     sleep 2
 done
@@ -30,8 +34,22 @@ do
     sleep 2
 done
 
+# Add line style
+until curl -v -u admin:geoserver -XPOST -H "Content-type: text/xml" -d "<style><name>color_line</name><filename>color_line.sld</filename></style>" $GEOSERVER_URL"rest/workspaces/geo/styles/"
+do
+    sleep 2
+done
+until curl -v -u admin:geoserver -XPUT -H "Content-type: application/vnd.ogc.sld+xml" -T "config/styles/color_line.sld" $GEOSERVER_URL"rest/workspaces/geo/styles/color_line"
+do
+    sleep 2
+done
+
 # Link style to layer
 until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><defaultStyle><name>color_point</name></defaultStyle></layer>" $GEOSERVER_URL"rest/workspaces/geo/layers/location"
+do
+    sleep 2
+done
+until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><defaultStyle><name>color_line</name></defaultStyle></layer>" $GEOSERVER_URL"rest/workspaces/geo/layers/line"
 do
     sleep 2
 done

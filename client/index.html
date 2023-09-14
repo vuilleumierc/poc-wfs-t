@@ -41,12 +41,10 @@
     <p>Draw or select one or several points on the map, then fill attribute values in the form below and finally submit the query.<br>
     The timestamp attribute is automatically set at the time of the drawing or selection</p>
     <form id="attrs" name=feature class="form-inline">
-      <label for="type">product_id &nbsp;</label>
-      <input type="number" id="product_id" name="product_id" min="1" max="100000" value="61">
-      <label for="type">cell_id &nbsp;</label>
-      <input type="string" id="cell_id" name="cell_id" value="228-03-17292-2">
-      <label for="type">azimuth &nbsp;</label>
-      <input type="float" id="azimuth" name="azimuth" min="-1" max="360" value="0.0">
+      <label for="type">Name &nbsp;</label>
+      <input type="string" id="name" name="name" value="Name">
+      <label for="type">Color &nbsp;</label>
+      <input type="string" id="color" name="color" value="#3352ff">
     </form>
     <div>
       <button onclick="sendData()">Submit</button>

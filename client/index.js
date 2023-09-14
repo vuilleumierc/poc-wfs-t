@@ -4,12 +4,14 @@ import GeoJSON from 'ol/format/GeoJSON';
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import VectorSource from 'ol/source/Vector'
-import {Vector as VectorLayer} from 'ol/layer';
+import ImageWMS from 'ol/source/ImageWMS';
+import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import {WFS as WFSFormat, GML as GMLFormat} from 'ol/format';
 import {Draw, Modify, Select, Snap} from 'ol/interaction';
 import Popup from 'ol-popup';
 
+// WFS layer
 const vectorSource = new VectorSource({
   format: new GeoJSON(),
   url: function (extent) {
@@ -24,10 +26,18 @@ const vectorSource = new VectorSource({
   },
   strategy: bboxStrategy,
 });
-
 const vector = new VectorLayer({
   source: vectorSource,
 });
+
+// WMS layer
+const imageSource = new ImageWMS({
+  url: 'http://localhost:61590/geoserver/geo/wms',
+  params: {'LAYERS': 'geo:location'},
+  ratio: 1,
+  serverType: 'geoserver',
+});
+const image = new ImageLayer({source: imageSource});
 
 const map = new Map({
   target: "map",
@@ -37,6 +47,7 @@ const map = new Map({
       source: new OSM(),
     }),
     vector,
+    image
   ],
   view: new View({
     center: [828064.77, 5934093.19],
@@ -182,8 +193,8 @@ function showLabels() {
   vectorSource.getFeatures().forEach(function(feature) {
     const popup = new Popup({offset: [0, -32]});
     map.addOverlay(popup);
-    const cell_id = feature.values_.cell_id;
-    popup.show(feature.getGeometry().flatCoordinates, '<div class="popup">Cell ID: ' + cell_id + '</div>');
+    const name = feature.values_.name;
+    popup.show(feature.getGeometry().flatCoordinates, '<div class="popup">Name: ' + name + '</div>');
   })
 };
 window.showLabels = showLabels;

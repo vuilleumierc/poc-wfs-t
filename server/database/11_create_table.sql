@@ -23,3 +23,14 @@ ALTER TABLE :schema."line" ADD COLUMN "name" VARCHAR;
 ALTER TABLE :schema."line" ADD COLUMN "color" VARCHAR;
 ALTER TABLE :schema."line" ADD COLUMN "timestamp" timestamp with time zone;
 COMMIT;
+
+DROP TABLE IF EXISTS :schema."area" CASCADE;
+DELETE FROM geometry_columns WHERE f_table_name = 'area' AND f_table_schema = :'schema';
+BEGIN;
+CREATE TABLE :schema."area" ( "id" BIGINT, CONSTRAINT "area_pk" PRIMARY KEY ("id") );
+SELECT AddGeometryColumn(:'schema','area','geometry',3857,'POLYGON',2);
+CREATE INDEX "area_geometry_geom_idx" ON :schema."area" USING GIST ("geometry");
+ALTER TABLE :schema."area" ADD COLUMN "name" VARCHAR;
+ALTER TABLE :schema."area" ADD COLUMN "color" VARCHAR;
+ALTER TABLE :schema."area" ADD COLUMN "timestamp" timestamp with time zone;
+COMMIT;

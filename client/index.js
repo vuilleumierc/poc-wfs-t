@@ -34,7 +34,7 @@ const vector = new VectorLayer({
 const imageSource = new ImageWMS({
   url: 'http://localhost:61590/geoserver/geo/wms',
   params: {
-    'LAYERS': 'geo:location,geo:line'
+    'LAYERS': 'geo:location,geo:line,geo:area'
   },
   ratio: 1,
   serverType: 'geoserver',

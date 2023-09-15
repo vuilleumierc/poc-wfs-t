@@ -1,40 +1,36 @@
 import "ol/ol.css";
 import { Map, View } from "ol";
-import GeoJSON from 'ol/format/GeoJSON';
+import { GeoJSON, WFS } from 'ol/format';
+import { equalTo as equalToFilter } from 'ol/format/filter.js';
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import VectorSource from 'ol/source/Vector'
 import ImageWMS from 'ol/source/ImageWMS';
 import {Image as ImageLayer, Vector as VectorLayer} from 'ol/layer';
-import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 import {WFS as WFSFormat, GML as GMLFormat} from 'ol/format';
 import {Draw, Modify, Select, Snap} from 'ol/interaction';
 import Popup from 'ol-popup';
 
+const GEOSERVER_URL = 'http://localhost:61590/geoserver/geo'
+
 // WFS layer
-const vectorSource = new VectorSource({
-  format: new GeoJSON(),
-  url: function (extent) {
-    return (
-      'http://localhost:61590/geoserver/ows?service=wfs&' +
-      'version=2.0.0&request=GetFeature&typeNames=geo:location&' +
-      'outputFormat=application/json&srsname=EPSG:3857&' +
-      'bbox=' +
-      extent.join(',') +
-      ',EPSG:3857'
-    );
-  },
-  strategy: bboxStrategy,
-});
+const vectorSource = new VectorSource();
 const vector = new VectorLayer({
   source: vectorSource,
 });
+const featureRequest = function (event_id) {
+  return new WFS().writeGetFeature({
+  srsName: 'EPSG:3857',
+  featureTypes: ['location', 'line', 'area'],
+  outputFormat: 'application/json',
+  filter: equalToFilter('event_id', event_id),
+})}
 
 // WMS layer
 const imageSource = new ImageWMS({
-  url: 'http://localhost:61590/geoserver/geo/wms',
+  url: GEOSERVER_URL + '/wms',
   params: {
-    'LAYERS': 'geo:location,geo:line,geo:area'
+    'LAYERS': 'location,line,area'
   },
   ratio: 1,
   serverType: 'geoserver',
@@ -84,7 +80,7 @@ const transactWFS = function (mode, features) {
         throw 'WFS-T mode ' + mode + ' is not supported'
   }
   const body = xs.serializeToString(node);
-  request.open('POST', 'http://localhost:61590/geoserver/geo/wfs');
+  request.open('POST', GEOSERVER_URL + '/wfs');
   request.setRequestHeader('dataType', 'xml')
   request.setRequestHeader('contentType', 'application/xml')
   request.send(body);
@@ -165,6 +161,23 @@ editMode.onchange = function () {
   map.removeInteraction(select);
   addInteractions();
 };
+
+// Filter features (WFS GetFeature request)
+function filter() {
+  vectorSource.clear(),
+  fetch(GEOSERVER_URL + '/wfs', {
+    method: 'POST',
+    body: new XMLSerializer().serializeToString(featureRequest(document.getElementById('event_id_filter').value)),
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (json) {
+      const features = new GeoJSON().readFeatures(json);
+      vectorSource.addFeatures(features);
+    });
+}
+window.filter = filter;
 
 // Read data from form and trigger WFS-T request
 function sendData() {

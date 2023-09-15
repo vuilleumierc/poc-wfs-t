@@ -11,4 +11,4 @@ serve:
 .PHONY: data-dump
 
 data-dump:
-	PGPASSWORD=postgres pg_dump --data-only --file=updated_sample_data.sql --table=location --table=line --host=localhost --port=61543 --username=postgres --verbose postgres 
+	PGPASSWORD=postgres pg_dump --data-only --file=updated_sample_data.sql --table=location --table=line --table=area --host=localhost --port=61543 --username=postgres --verbose postgres

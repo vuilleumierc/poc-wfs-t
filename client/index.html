@@ -22,6 +22,11 @@
 
   <body>
     <div id="map"></div>
+    <form id="filter" class="form-inline">
+      <label for="event_id_filter">Filter by event ID: &nbsp;</label>
+      <input type="integer" id="event_id_filter" name="event_id_filter" value="10">
+      <button type="button" onclick="filter()">Submit</button>
+    </form>
     <button type="button" onclick="showLabels()">Show labels</button>
     <button type="button" onclick="toggleEditing()">Toggle editing</button>
     <form id="feature" class="form-inline">

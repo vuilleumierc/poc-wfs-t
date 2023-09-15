@@ -193,10 +193,13 @@ window.sendData = sendData;
 // Add attribute popup
 function showLabels() {
   vectorSource.getFeatures().forEach(function(feature) {
-    const popup = new Popup({offset: [0, -32]});
+    const popup = new Popup({offset: [12, -32]});
     map.addOverlay(popup);
     const name = feature.values_.name;
-    popup.show(feature.getGeometry().flatCoordinates, '<div class="popup">Name: ' + name + '</div>');
+    const event_id = feature.values_.event_id;
+    popup.show(
+      feature.getGeometry().flatCoordinates,
+      '<div class="popup">Event: ' + event_id + '<br>' + 'Name: ' + name + '</div>');
   })
 };
 window.showLabels = showLabels;

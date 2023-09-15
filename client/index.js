@@ -11,7 +11,8 @@ import {WFS as WFSFormat, GML as GMLFormat} from 'ol/format';
 import {Draw, Modify, Select, Snap} from 'ol/interaction';
 import Popup from 'ol-popup';
 
-const GEOSERVER_URL = 'http://localhost:61590/geoserver/geo'
+const GEOSERVER_URL = 'http://localhost:61590/geoserver/geo';
+const LAYERS = ['location', 'line', 'area'];
 
 // WFS layer
 const vectorSource = new VectorSource();
@@ -21,7 +22,7 @@ const vector = new VectorLayer({
 const featureRequest = function (event_id) {
   return new WFS().writeGetFeature({
   srsName: 'EPSG:3857',
-  featureTypes: ['location', 'line', 'area'],
+  featureTypes: LAYERS,
   outputFormat: 'application/json',
   filter: equalToFilter('event_id', event_id),
 })}
@@ -30,7 +31,7 @@ const featureRequest = function (event_id) {
 const imageSource = new ImageWMS({
   url: GEOSERVER_URL + '/wms',
   params: {
-    'LAYERS': 'location,line,area'
+    'LAYERS': LAYERS.join(),
   },
   ratio: 1,
   serverType: 'geoserver',
@@ -162,22 +163,33 @@ editMode.onchange = function () {
   addInteractions();
 };
 
-// Filter features (WFS GetFeature request)
-function filter() {
-  vectorSource.clear(),
+// Filter features
+function filterByEventId() {
+  const event_id = document.getElementById('event_id_filter').value;
+
+  // WFS source
+  vectorSource.clear();
   fetch(GEOSERVER_URL + '/wfs', {
     method: 'POST',
-    body: new XMLSerializer().serializeToString(featureRequest(document.getElementById('event_id_filter').value)),
+    body: new XMLSerializer().serializeToString(featureRequest(event_id)),
   })
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (json) {
-      const features = new GeoJSON().readFeatures(json);
-      vectorSource.addFeatures(features);
-    });
+  .then(function (response) {
+    return response.json();
+  })
+  .then(function (json) {
+    const features = new GeoJSON().readFeatures(json);
+    vectorSource.addFeatures(features);
+  });
+
+  // WMS source
+  imageSource.updateParams(
+    {
+      'LAYERS': LAYERS.join(),
+      'CQL_FILTER': `event_id=${event_id};event_id=${event_id};event_id=${event_id}`,
+    }
+  )
 }
-window.filter = filter;
+window.filter = filterByEventId;
 
 // Read data from form and trigger WFS-T request
 function sendData() {

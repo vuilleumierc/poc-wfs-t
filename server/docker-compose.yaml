@@ -12,7 +12,12 @@ services:
     ports:
       - 61590:8080
     volumes:
+      # Some server config including CORS for Jetty
       - ./config/web-inf/web.xml:/var/lib/jetty/webapps/geoserver/WEB-INF/web.xml
+      # Directory to serve static files
+      - ./config/styles/icons:/mnt/geoserver_datadir/www
+      # Directory for local icons for styles
+      - ./config/styles/icons:/mnt/geoserver_datadir/workspaces/geo/styles/icons:rw
 
   ########################
   # Database for geodata #

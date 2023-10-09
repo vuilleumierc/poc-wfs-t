@@ -11,9 +11,13 @@
           <sld:PointSymbolizer>
             <sld:Graphic>
               <ExternalGraphic xmlns="http://www.opengis.net/sld" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <!-- 
                 <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/geoserver/www/fuel.svg" />
+                -->
+                <OnlineResource xlink:type="simple" xlink:href="http://localhost:8080/geoserver/www/${icon}.svg"/>
                 <Format>image/svg+xml</Format>
               </ExternalGraphic>
+              <Size>32</Size> 
             </sld:Graphic>
           </sld:PointSymbolizer>
         </sld:Rule>

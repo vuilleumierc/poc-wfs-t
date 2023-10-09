@@ -11,6 +11,7 @@ CREATE INDEX "location_geometry_geom_idx" ON :schema."location" USING GIST ("geo
 ALTER TABLE :schema."location" ADD COLUMN "event_id" BIGINT;
 ALTER TABLE :schema."location" ADD COLUMN "name" VARCHAR;
 ALTER TABLE :schema."location" ADD COLUMN "color" VARCHAR;
+ALTER TABLE :schema."location" ADD COLUMN "icon" VARCHAR;
 ALTER TABLE :schema."location" ADD COLUMN "timestamp" timestamp with time zone;
 COMMIT;
 

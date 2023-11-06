@@ -48,30 +48,6 @@ do
     sleep 2
 done
 
-# Add polygon style
-until curl -v -u admin:geoserver -XPOST -H "Content-type: text/xml" -d "<style><name>color_polygon</name><filename>color_polygon.sld</filename></style>" $GEOSERVER_URL"rest/workspaces/geo/styles/"
-do
-    sleep 2
-done
-until curl -v -u admin:geoserver -XPUT -H "Content-type: application/vnd.ogc.sld+xml" -T "config/styles/color_polygon.sld" $GEOSERVER_URL"rest/workspaces/geo/styles/color_polygon"
-do
-    sleep 2
-done
-
-# Link style to layer (default)
-until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><defaultStyle><name>color_point</name></defaultStyle></layer>" $GEOSERVER_URL"rest/workspaces/geo/layers/location"
-do
-    sleep 2
-done
-until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><defaultStyle><name>color_line</name></defaultStyle></layer>" $GEOSERVER_URL"rest/workspaces/geo/layers/line"
-do
-    sleep 2
-done
-until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><defaultStyle><name>color_polygon</name></defaultStyle></layer>" $GEOSERVER_URL"rest/workspaces/geo/layers/area"
-do
-    sleep 2
-done
-
 # Add svg styles
 until curl -v -u admin:geoserver -XPOST -H "Content-type: text/xml" -d "<style><name>svg_local_point</name><filename>svg_local_point.sld</filename></style>" $GEOSERVER_URL"rest/workspaces/geo/styles/"
 do
@@ -94,6 +70,32 @@ until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><s
 do
     sleep 2
 done
+
+# Add polygon style
+until curl -v -u admin:geoserver -XPOST -H "Content-type: text/xml" -d "<style><name>color_polygon</name><filename>color_polygon.sld</filename></style>" $GEOSERVER_URL"rest/workspaces/geo/styles/"
+do
+    sleep 2
+done
+until curl -v -u admin:geoserver -XPUT -H "Content-type: application/vnd.ogc.sld+xml" -T "config/styles/color_polygon.sld" $GEOSERVER_URL"rest/workspaces/geo/styles/color_polygon"
+do
+    sleep 2
+done
+
+# Link style to layer (default)
+until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><defaultStyle><name>svg_online_point</name></defaultStyle></layer>" $GEOSERVER_URL"rest/workspaces/geo/layers/location"
+do
+    sleep 2
+done
+until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><defaultStyle><name>color_line</name></defaultStyle></layer>" $GEOSERVER_URL"rest/workspaces/geo/layers/line"
+do
+    sleep 2
+done
+until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><defaultStyle><name>color_polygon</name></defaultStyle></layer>" $GEOSERVER_URL"rest/workspaces/geo/layers/area"
+do
+    sleep 2
+done
+
+
 
 # Add write permission to layer
 until curl -u admin:geoserver -XPOST -T "config/security/rules.xml" -H "Content-type: text/xml" $GEOSERVER_URL"rest/security/acl/layers"

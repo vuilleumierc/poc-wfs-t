@@ -32,3 +32,18 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - ./database:/docker-entrypoint-initdb.d
+
+  pgtileserve:
+    image: pramsey/pg_featureserv:latest
+    ports:
+      - 9000:9000
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
+    
+  pygeoapi:
+    image: geopython/pygeoapi:latest
+    ports:
+      - 5000:80
+    volumes:
+      - ./config2.yml:/pygeoapi/local.config.yml  
+    

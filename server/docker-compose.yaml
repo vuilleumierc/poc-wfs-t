@@ -7,13 +7,13 @@ services:
   # GeoServer #
   #############
   geoserver:
-    image: camptocamp/geoserver:jetty-openshift-2.20.1
+    image: camptocamp/geoserver:2.22.2
     user: $UID:$GID
     ports:
       - 61590:8080
     volumes:
       # Some server config including CORS for Jetty
-      - ./config/web-inf/web.xml:/var/lib/jetty/webapps/geoserver/WEB-INF/web.xml
+      #      - ./config/web-inf/web.xml:/var/lib/jetty/webapps/geoserver/WEB-INF/web.xml
       # Directory to serve static files
       - ./config/styles/icons:/mnt/geoserver_datadir/www
       # Directory for local icons for styles

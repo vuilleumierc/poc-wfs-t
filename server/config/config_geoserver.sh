@@ -95,10 +95,27 @@ do
     sleep 2
 done
 
-
-
 # Add write permission to layer
 until curl -u admin:geoserver -XPOST -T "config/security/rules.xml" -H "Content-type: text/xml" $GEOSERVER_URL"rest/security/acl/layers"
+do
+    sleep 2
+done
+
+# Add layer and style to test legends
+
+until curl -v -u admin:geoserver -XPOST -T "config/layers/layer_eld_pane_1_polygon.xml" -H "Content-type: text/xml" $GEOSERVER_URL"rest/workspaces/geo/featuretypes"
+do
+    sleep 2
+done
+until curl -v -u admin:geoserver -XPOST -H "Content-type: text/xml" -d "<style><name>localized</name><filename>localized.sld</filename></style>" $GEOSERVER_URL"rest/workspaces/geo/styles/"
+do
+    sleep 2
+done
+until curl -v -u admin:geoserver -XPUT -H "Content-type: application/vnd.ogc.sld+xml" -T "config/styles/localized.sld" $GEOSERVER_URL"rest/workspaces/geo/styles/localized"
+do
+    sleep 2
+done
+until curl -v -u admin:geoserver -XPUT -H "Content-type: text/xml" -d "<layer><defaultStyle><name>localized</name></defaultStyle></layer>" $GEOSERVER_URL"rest/workspaces/geo/layers/eld_pane_1_polygon"
 do
     sleep 2
 done

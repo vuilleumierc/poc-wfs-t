@@ -39,11 +39,11 @@ services:
       - 9000:9000
     environment:
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
-    
+
   pygeoapi:
     image: geopython/pygeoapi:latest
     ports:
       - 5000:80
     volumes:
-      - ./config2.yml:/pygeoapi/local.config.yml  
-    
+      - ./config2.yml:/pygeoapi/local.config.yml
+

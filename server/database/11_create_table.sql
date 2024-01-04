@@ -29,8 +29,6 @@ BEFORE INSERT ON location
 FOR EACH ROW EXECUTE FUNCTION transform_and_update_geometry();
 COMMIT;
 
-
-
 DROP TABLE IF EXISTS :schema."line" CASCADE;
 DELETE FROM geometry_columns WHERE f_table_name = 'line' AND f_table_schema = :'schema';
 BEGIN;
@@ -56,3 +54,24 @@ ALTER TABLE :schema."area" ADD COLUMN "color" VARCHAR;
 ALTER TABLE :schema."area" ADD COLUMN "icon" VARCHAR;
 ALTER TABLE :schema."area" ADD COLUMN "timestamp" timestamp with time zone;
 COMMIT;
+
+CREATE TABLE IF NOT EXISTS :schema."eld_pane_1_polygon" (
+    id BIGINT PRIMARY KEY,
+    naz_rw INT,
+    description_de JSONB,
+    description_fr JSONB,
+    description_it JSONB,
+    description_en JSONB,
+    geometry GEOMETRY (POLYGON, 4326),
+    rule_id BIGINT,
+    legend_default VARCHAR,
+    legend_de VARCHAR,
+    legend_fr VARCHAR,
+    legend_it VARCHAR,
+    start_date TIMESTAMP,
+    end_date TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_eld_pane_1_polygon_rule_id ON :schema."eld_pane_1_polygon" (rule_id);
+CREATE INDEX IF NOT EXISTS idx_eld_pane_1_polygon_geometry_gist ON :schema."eld_pane_1_polygon" USING GIST (geometry);
+CREATE INDEX IF NOT EXISTS idx_eld_pane_1_polygon_start_date ON :schema."eld_pane_1_polygon" (start_date);
+CREATE INDEX IF NOT EXISTS idx_eld_pane_1_polygon_end_date ON :schema."eld_pane_1_polygon" (end_date);

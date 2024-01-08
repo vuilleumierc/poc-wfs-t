@@ -1,7 +1,11 @@
 <featureType>
   <name>eld_pane_1_polygon</name>
   <nativeName>eld_pane_1_polygon</nativeName>
-  <title>eld_pane_1_polygon</title>
+  <internationalTitle>
+    <de-CH>Titel auf Deutsch</de-CH>
+    <fr-CH>Titre en français</fr-CH>
+    <it-CH>Titolo in italiano</it-CH>
+  </internationalTitle>
   <keywords>
     <string>eld_pane_1_polygon</string>
     <string>features</string>
@@ -44,12 +48,12 @@
   </latLonBoundingBox>
   <projectionPolicy>FORCE_DECLARED</projectionPolicy>
   <enabled>true</enabled>
+  <advertised>true</advertised>
   <store class="dataStore">
     <name>postgis</name>
   </store>
   <serviceConfiguration>false</serviceConfiguration>
   <simpleConversionEnabled>false</simpleConversionEnabled>
-  <internationalTitle/>
   <internationalAbstract/>
   <maxFeatures>0</maxFeatures>
   <numDecimals>0</numDecimals>

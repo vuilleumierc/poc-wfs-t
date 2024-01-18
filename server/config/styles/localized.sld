@@ -7,9 +7,9 @@
                       xmlns:xlink="http://www.w3.org/1999/xlink"
                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NamedLayer>
-    <Name>eld_pane_1_polygon</Name>
+    <Name>localized_layer</Name>
     <UserStyle>
-      <Name>eld_pane_1_polygon</Name>
+      <Name>localized</Name>
       <FeatureTypeStyle>
         <Rule>
           <Name>10</Name>
